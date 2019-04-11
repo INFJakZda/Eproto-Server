@@ -46,8 +46,8 @@ public class Student {
     public Date getBirthDate(){ return birthDate; }
     public void setBirthDate(Date birthDate){ this.birthDate = birthDate; }
 
-    @XmlElementWrapper(name="grades")
-    @XmlElement(name="grade")
+    @XmlElementWrapper(name = "grades")
+    @XmlElement(name = "grade")
     public ArrayList<Grade> getGrades() { return grades; }
     public void setGrades(ArrayList<Grade> grades) { this.grades = grades; }
 }

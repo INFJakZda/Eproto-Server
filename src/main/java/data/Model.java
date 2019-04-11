@@ -25,18 +25,8 @@ public class Model {
         return instance;
     }
 
-    private Map<Integer, Student> students = new HashMap<>();
+    // **** COURSES ****
     private Map<Integer, Course> courses = new HashMap<>();
-
-    public ArrayList<Student> getStudents(){
-        return new ArrayList<>(this.students.values());
-    }
-
-    public void addStudent(Student student){
-        studentIndex++;
-        student.setIndex(studentIndex);
-        students.put(studentIndex, student);
-    }
 
     public ArrayList<Course> getCourses(){
         return new ArrayList<>(this.courses.values());
@@ -46,8 +36,8 @@ public class Model {
         return courses.getOrDefault(id, null);
     }
 
-    public Student getStudent(int id) {
-        return students.getOrDefault(id, null);
+    public void addCourse(Course course){
+        this.courses.put(course.getId(), course);
     }
 
     public boolean checkCourseId(Course course) {
@@ -59,10 +49,34 @@ public class Model {
     }
 
     public boolean deleteCourse(int id) {
-        if(courses.remove(id) != null)
+        if(courses.remove(id) != null) {
+            for (Student student : students.values()) {
+                student.getGrades().removeIf(x -> x.getCourse().getId() == id);
+//                for(Grade grade: student.getGrades()) {
+//                    grade.getCourse().getId().r
+//                }
+            }
             return true;
+        }
         else
             return false;
+    }
+
+    // **** STUDENTS ****
+    private Map<Integer, Student> students = new HashMap<>();
+
+    public ArrayList<Student> getStudents(){
+        return new ArrayList<>(this.students.values());
+    }
+
+    public void addStudent(Student student){
+        studentIndex++;
+        student.setIndex(studentIndex);
+        students.put(studentIndex, student);
+    }
+
+    public Student getStudent(int id) {
+        return students.getOrDefault(id, null);
     }
 
     public boolean deleteStudent(int id) {
@@ -72,24 +86,36 @@ public class Model {
             return false;
     }
 
-    public void addCourse(Course course){
-        this.courses.put(course.getId(), course);
+    // **** GRADES ****
+    public boolean deleteGrade(int idg, int id) {
+        Grade grade = getGrade(id, idg);
+        if (grade != null) {
+            Student student = students.get(id);
+            ArrayList<Grade> grades = student.getGrades();
+            grades.remove(grade);
+            student.setGrades(grades);
+            return true;
+        }
+        return false;
     }
-
 
     public Grade getGrade(int studentId, int gradeId){
         Student student = students.get(studentId);
         if (student != null) {
-            Grade grade = student.getGrades().get(gradeId);
-            if (grade != null)
-                return grade;
+            ArrayList<Grade> grades = student.getGrades();
+            for (Grade grade: grades)
+                if (grade.getId() == gradeId)
+                    return grade;
         }
         return null;
     }
 
     public ArrayList<Grade> getGrades(int id) {
         Student student = students.get(id);
-        return student.getGrades();
+        if (student != null) {
+            return student.getGrades();
+        }
+        return null;
     }
 
     public int getGradeIndex() {
@@ -101,6 +127,12 @@ public class Model {
         Student student = students.get(id);
         if(student != null) {
             grade.setId(getGradeIndex());
+            int courseId = grade.getCourse().getId();
+            Course course = courses.get(courseId);
+            if (course == null) {
+                return false;
+            }
+            grade.setCourse(course);
             ArrayList<Grade> grades = student.getGrades();
             grades.add(grade);
             student.setGrades(grades);

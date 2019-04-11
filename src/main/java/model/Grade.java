@@ -29,7 +29,7 @@ public class Grade {
 
     @XmlElement
     public double getValue() { return value; }
-    public void setValue(float value) { this.value = value; }
+    public void setValue(double value) { this.value = value; }
 
     @XmlElement
     public Date getDate() { return date; }

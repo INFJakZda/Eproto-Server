@@ -11,10 +11,20 @@ import java.util.ArrayList;
 public class Grades {
     Model model = Model.getInstance();
 
+//    @GET
+//    @Produces(MediaType.APPLICATION_XML)
+//    public ArrayList<Grade> getAll(@PathParam("id") int id) {
+//        return model.getGrades(id);
+//    }
+
     @GET
     @Produces(MediaType.APPLICATION_XML)
     public ArrayList<Grade> getAll(@PathParam("id") int id) {
-        return model.getGrades(id);
+        ArrayList<Grade> grades = model.getGrades(id);
+        if(grades != null) {
+            return grades;
+        }
+        return null;
     }
 
     @POST
@@ -43,42 +53,42 @@ public class Grades {
         return Response.status(404).build();
     }
 //
-//    @PUT
-//    @Path("{id}")
-//    @Produces(MediaType.APPLICATION_XML)
-//    @Consumes(MediaType.APPLICATION_XML)
-//    public Response put(Grade gradePut, @PathParam("id") int id) {
-//        Grade grade = model.getGrade(id);
-//        boolean modified = false;
-//        if (grade == null){
-//            return Response.status(404).build();
-//        }
-//        if (!grade.getSurname().equals(gradePut.getSurname())){
-//            grade.setSurname(gradePut.getSurname());
-//            modified = true;
-//        }
-//        if (!grade.getName().equals(gradePut.getName())){
-//            grade.setName(gradePut.getName());
-//            modified = true;
-//        }
-//        if (!grade.getBirthDate().equals(gradePut.getBirthDate())) {
-//            grade.setBirthDate(gradePut.getBirthDate());
-//            modified = true;
-//        }
-//        if (modified)
-//            return Response.status(200).entity(grade).build();
-//        else
-//            return Response.status(304).build();
-//    }
+    @PUT
+    @Path("{idG}")
+    @Produces(MediaType.APPLICATION_XML)
+    @Consumes(MediaType.APPLICATION_XML)
+    public Response put(Grade gradePut, @PathParam("id") int id, @PathParam("idG") int idG) {
+        Grade grade = model.getGrade(id, idG);
+        boolean modified = false;
+        if (grade == null){
+            return Response.status(404).build();
+        }
+        if (grade.getValue() != gradePut.getValue()) {
+            grade.setValue(gradePut.getValue());
+            modified = true;
+        }
+        if (grade.getDate() != gradePut.getDate()) {
+            grade.setDate(gradePut.getDate());
+            modified = true;
+        }
+        if (grade.getCourse() == gradePut.getCourse()) {
+            grade.setCourse(gradePut.getCourse());
+            modified = true;
+        }
+        if (modified)
+            return Response.status(200).entity(grade).build();
+        else
+            return Response.status(304).build();
+    }
 //
-//    @DELETE
-//    @Path("{id}")
-//    @Produces(MediaType.APPLICATION_XML)
-//    public Response delete(@PathParam("id") int id) {
-//        if (model.deleteGrade(id))
-//            return Response.status(200).build();
-//        else
-//            return Response.status(404).build();
-//
-//    }
+    @DELETE
+    @Path("{idG}")
+    @Produces(MediaType.APPLICATION_XML)
+    public Response delete(@PathParam("idG") int idG, @PathParam("id") int id) {
+        if (model.deleteGrade(idG, id))
+            return Response.status(200).build();
+        else
+            return Response.status(404).build();
+
+    }
 }
