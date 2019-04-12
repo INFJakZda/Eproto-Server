@@ -12,13 +12,13 @@ public class Courses {
     Model model = Model.getInstance();
 
     @GET
-    @Produces(MediaType.APPLICATION_XML)
-    public ArrayList<Course> getAll() {
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public ArrayList<Course> getCourses() {
         return model.getCourses();
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response add(Course course, @Context UriInfo uriInfo) {
         if (!model.checkCourseId(course))
             return Response.status(403).build();
@@ -30,8 +30,8 @@ public class Courses {
 
     @GET
     @Path("{id}")
-    @Produces(MediaType.APPLICATION_XML)
-    public Response get(@PathParam("id") int id) {
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public Response getCourse(@PathParam("id") int id) {
         Course course = model.getCourse(id);
         if (course == null) {
             return Response.status(404).build();
@@ -42,8 +42,8 @@ public class Courses {
 
     @PUT
     @Path("{id}")
-    @Produces(MediaType.APPLICATION_XML)
-    @Consumes(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response put(Course coursePut, @PathParam("id") int id) {
         Course course = model.getCourse(id);
         if (course == null){
@@ -66,7 +66,7 @@ public class Courses {
 
     @DELETE
     @Path("{id}")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response delete(@PathParam("id") int id) {
         if (model.deleteCourse(id))
             return Response.status(200).build();

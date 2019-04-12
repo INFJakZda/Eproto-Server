@@ -12,13 +12,13 @@ public class Students {
     Model model = Model.getInstance();
 
     @GET
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public ArrayList<Student> getAll() {
         return model.getStudents();
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response add(Student student, @Context UriInfo uriInfo) {
         model.addStudent(student);
         UriBuilder builder = uriInfo.getAbsolutePathBuilder();
@@ -28,7 +28,7 @@ public class Students {
 
     @GET
     @Path("{id}")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response get(@PathParam("id") int id) {
         Student student = model.getStudent(id);
         if (student == null) {
@@ -40,8 +40,8 @@ public class Students {
 
     @PUT
     @Path("{id}")
-    @Produces(MediaType.APPLICATION_XML)
-    @Consumes(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response put(Student studentPut, @PathParam("id") int id) {
         Student student = model.getStudent(id);
         boolean modified = false;
@@ -68,7 +68,7 @@ public class Students {
 
     @DELETE
     @Path("{id}")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response delete(@PathParam("id") int id) {
         if (model.deleteStudent(id))
             return Response.status(200).build();

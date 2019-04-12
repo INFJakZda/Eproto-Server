@@ -12,13 +12,13 @@ public class Grades {
     Model model = Model.getInstance();
 
 //    @GET
-//    @Produces(MediaType.APPLICATION_XML)
+//    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 //    public ArrayList<Grade> getAll(@PathParam("id") int id) {
 //        return model.getGrades(id);
 //    }
 
     @GET
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public ArrayList<Grade> getAll(@PathParam("id") int id) {
         ArrayList<Grade> grades = model.getGrades(id);
         if(grades != null) {
@@ -28,7 +28,7 @@ public class Grades {
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response add(Grade grade, @Context UriInfo uriInfo, @PathParam("id") int id) {
         if (model.addGrade(grade, id)) {
             UriBuilder builder = uriInfo.getAbsolutePathBuilder();
@@ -42,7 +42,7 @@ public class Grades {
 
     @GET
     @Path("{idG}")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response get(@PathParam("idG") int idG, @PathParam("id") int id) {
         ArrayList<Grade> gradeList = model.getGrades(id);
         for (Grade grade : gradeList) {
@@ -55,8 +55,8 @@ public class Grades {
 //
     @PUT
     @Path("{idG}")
-    @Produces(MediaType.APPLICATION_XML)
-    @Consumes(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response put(Grade gradePut, @PathParam("id") int id, @PathParam("idG") int idG) {
         Grade grade = model.getGrade(id, idG);
         boolean modified = false;
@@ -83,7 +83,7 @@ public class Grades {
 //
     @DELETE
     @Path("{idG}")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response delete(@PathParam("idG") int idG, @PathParam("id") int id) {
         if (model.deleteGrade(idG, id))
             return Response.status(200).build();
