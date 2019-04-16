@@ -1,11 +1,20 @@
 package model;
 
+import endpoint.Grades;
+import endpoint.Students;
+import org.glassfish.jersey.linking.Binding;
+import org.glassfish.jersey.linking.InjectLink;
+import org.glassfish.jersey.linking.InjectLinks;
+
+import javax.ws.rs.core.Link;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @XmlRootElement(name = "student")
 public class Student {
@@ -50,4 +59,25 @@ public class Student {
     @XmlElement(name = "grade")
     public ArrayList<Grade> getGrades() { return grades; }
     public void setGrades(ArrayList<Grade> grades) { this.grades = grades; }
+
+    @InjectLinks({
+        @InjectLink(
+                rel = "self",
+                resource = Students.class,
+                bindings = @Binding(name = "id", value = "${instance.index}"),
+                method = "get"),
+        @InjectLink(
+                rel = "parent",
+                method = "getAll",
+                resource = Students.class),
+        @InjectLink(
+                rel = "grades",
+                method = "getGrades",
+                resource = Grades.class,
+                bindings = @Binding(name = "id", value = "${instance.index}"))
+    })
+    @XmlElement(name="link")
+    @XmlElementWrapper(name = "links")
+    @XmlJavaTypeAdapter(Link.JaxbAdapter.class)
+    List<Link> links;
 }

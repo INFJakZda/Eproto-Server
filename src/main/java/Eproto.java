@@ -1,8 +1,10 @@
 import data.Model;
+import endpoint.Courses;
 import model.*;
 
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.linking.DeclarativeLinkingFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import javax.ws.rs.core.UriBuilder;
@@ -17,9 +19,8 @@ public class Eproto {
         createData(model);
 
         URI baseUri = UriBuilder.fromUri("http://localhost").port(9998).build();
-        ResourceConfig config = new ResourceConfig().packages("endpoint");
+        ResourceConfig config = new ResourceConfig().packages("endpoint").register(DeclarativeLinkingFeature.class);
         HttpServer server = GrizzlyHttpServerFactory.createHttpServer(baseUri, config);
-        server.start();
     }
 
     public static void createData(Model model) {
