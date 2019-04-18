@@ -64,7 +64,6 @@ public class Grade {
             @InjectLink(
                     rel = "student",
                     resource = Students.class,
-                    bindings = @Binding(name = "id", value = "${instance.id}"),
                     method = "get"),
             @InjectLink(
                     rel = "course",
