@@ -2,10 +2,11 @@ package endpoint;
 
 import data.*;
 import model.*;
+import org.bson.types.ObjectId;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import java.util.ArrayList;
+import java.util.Collection;
 
 @Path("/courses")
 public class Courses {
@@ -13,25 +14,24 @@ public class Courses {
 
     @GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public ArrayList<Course> getCourses() {
-        return model.getCourses();
+    public Collection<Course> getCourses(@QueryParam("professor") String professor,
+                                         @QueryParam("name") String name) {
+        return model.getCourses(professor, name);
     }
 
     @POST
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response add(Course course, @Context UriInfo uriInfo) {
-        if (!model.checkCourseId(course))
-            return Response.status(403).build();
-        model.addCourse(course);
+        course = model.addCourse(course);
         UriBuilder builder = uriInfo.getAbsolutePathBuilder();
-        builder.path(Integer.toString(course.getId()));
+        builder.path(course.getId().toString());
         return Response.created(builder.build()).build();
     }
 
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public Response getCourse(@PathParam("id") int id) {
+    public Response getCourse(@PathParam("id") ObjectId id) {
         Course course = model.getCourse(id);
         if (course == null) {
             return Response.status(404).build();
@@ -44,9 +44,10 @@ public class Courses {
     @Path("{id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public Response put(Course coursePut, @PathParam("id") int id) {
+    public Response put(Course coursePut, @PathParam("id") ObjectId id) {
+        coursePut.setId(id);
         Course course = model.getCourse(id);
-        if (course == null){
+        if (course == null) {
             return Response.status(404).build();
         }
         boolean modified = false;
@@ -58,20 +59,22 @@ public class Courses {
             course.setProfessor(coursePut.getProfessor());
             modified = true;
         }
-        if (modified)
-            return Response.status(200).entity(course).build();
-        else
+        if (modified) {
+            model.updateCourse(course);
+            return Response.ok().build();
+        }
+        else {
             return Response.status(304).build();
+        }
     }
 
     @DELETE
     @Path("{id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public Response delete(@PathParam("id") int id) {
+    public Response delete(@PathParam("id") ObjectId id) {
         if (model.deleteCourse(id))
             return Response.status(200).build();
         else
             return Response.status(404).build();
-
     }
 }

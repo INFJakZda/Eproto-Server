@@ -1,4 +1,5 @@
 import data.Model;
+import data.MongoDB;
 import endpoint.Courses;
 import model.*;
 
@@ -21,15 +22,16 @@ public class Eproto {
         URI baseUri = UriBuilder.fromUri("http://localhost").port(9998).build();
         ResourceConfig config = new ResourceConfig().packages("endpoint").register(DeclarativeLinkingFeature.class);
         HttpServer server = GrizzlyHttpServerFactory.createHttpServer(baseUri, config);
+        MongoDB.getInstance();
     }
 
     public static void createData(Model model) {
         try {
             // COURSES
-            Course course1 = new Course(0, "SINT", "Pawlak");
-            Course course2 = new Course(1, "PIRO", "Kowalski");
-            model.addCourse(course1);
-            model.addCourse(course2);
+            Course course1 = new Course("SINT", "Pawlak");
+            Course course2 = new Course("PIRO", "Kowalski");
+//            model.addCourse(course1);
+//            model.addCourse(course2);
 
             // STUDENTS
             Student student1 = new Student("Ala", "Nowicka", new Date());

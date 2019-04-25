@@ -1,34 +1,38 @@
 package model;
 
 import endpoint.Courses;
+import org.bson.types.ObjectId;
 import org.glassfish.jersey.linking.Binding;
 import org.glassfish.jersey.linking.InjectLink;
 import org.glassfish.jersey.linking.InjectLinks;
+import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
 
 import javax.ws.rs.core.Link;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.List;
 
+@Entity
+@XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "course")
 public class Course {
-    private  int id;
+    @Id
+    private ObjectId id;
     private String name;
     private String professor;
 
     public Course(){}
-    public Course(int id, String name, String professor){
-        this.id = id;
+    public Course(String name, String professor){
+//        this.id = id;
         this.name = name;
         this.professor = professor;
     }
 
+    @XmlJavaTypeAdapter(ObjectIdJaxbAdapter.class)
     @XmlAttribute
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public ObjectId getId() { return id; }
+    public void setId(ObjectId id) { this.id = id; }
 
     @XmlElement
     public String getName() { return name; }

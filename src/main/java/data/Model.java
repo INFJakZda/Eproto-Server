@@ -1,13 +1,16 @@
 package data;
 
 import model.*;
+import org.bson.types.ObjectId;
+import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.Key;
+import org.mongodb.morphia.query.Query;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Model {
     private volatile static Model instance;
+    private volatile static Datastore datastore;
     private static int studentIndex = 0;
     private static int gradeIndex = 0;
 
@@ -19,6 +22,7 @@ public class Model {
             synchronized (Model.class) {
                 if (instance == null) {
                     instance = new Model();
+                    datastore = MongoDB.getInstance().getDatastore();
                 }
             }
         }
@@ -26,40 +30,42 @@ public class Model {
     }
 
     // **** COURSES ****
-    private Map<Integer, Course> courses = new HashMap<>();
+    public Collection<Course> getCourses(String professorParam, String nameParam) {
 
-    public ArrayList<Course> getCourses(){
-        return new ArrayList<>(this.courses.values());
+        Query<Course> query = datastore.createQuery(Course.class);
+
+        Optional<String> professor = Optional.ofNullable(professorParam);
+        Optional<String> name = Optional.ofNullable(nameParam);
+        professor.ifPresent(s -> query.and(query.criteria("professor").containsIgnoreCase(s)));
+        name.ifPresent(s -> query.and(query.criteria("name").containsIgnoreCase(s)));
+
+        return query.asList();
     }
 
-    public Course getCourse(int id) {
-        return courses.getOrDefault(id, null);
+    public Course getCourse(ObjectId id) {
+        return datastore.find(Course.class, "id", id).get();
     }
 
-    public void addCourse(Course course){
-        this.courses.put(course.getId(), course);
+    public Course addCourse(Course object) {
+        Key<Course> key = datastore.save(object);
+        object.setId((ObjectId) key.getId());
+        return object;
     }
 
-    public boolean checkCourseId(Course course) {
-        if (courses.containsKey(course.getId())) {
+    public void updateCourse(Course object) {
+//        Course current = datastore.find(Course.class, "id", object.getId()).get();
+//        object.setId(current.getId());
+        datastore.save(object);
+    }
+
+    public boolean deleteCourse(ObjectId id) {
+        Course course = this.getCourse(id);
+        if (course == null) {
             return false;
-        }
-        else
-            return true;
-    }
-
-    public boolean deleteCourse(int id) {
-        if(courses.remove(id) != null) {
-            for (Student student : students.values()) {
-                student.getGrades().removeIf(x -> x.getCourse().getId() == id);
-//                for(Grade grade: student.getGrades()) {
-//                    grade.getCourse().getId().r
-//                }
-            }
+        } else {
+            datastore.delete(datastore.find(Course.class, "id", id));
             return true;
         }
-        else
-            return false;
     }
 
     // **** STUDENTS ****
@@ -124,20 +130,20 @@ public class Model {
     }
 
     public boolean addGrade(Grade grade, int id){
-        Student student = students.get(id);
-        if(student != null) {
-            grade.setId(getGradeIndex());
-            int courseId = grade.getCourse().getId();
-            Course course = courses.get(courseId);
-            if (course == null) {
-                return false;
-            }
-            grade.setCourse(course);
-            ArrayList<Grade> grades = student.getGrades();
-            grades.add(grade);
-            student.setGrades(grades);
-            return true;
-        }
+//        Student student = students.get(id);
+//        if(student != null) {
+//            grade.setId(getGradeIndex());
+//            int courseId = grade.getCourse().getId();
+//            Course course = courses.get(courseId);
+//            if (course == null) {
+//                return false;
+//            }
+//            grade.setCourse(course);
+//            ArrayList<Grade> grades = student.getGrades();
+//            grades.add(grade);
+//            student.setGrades(grades);
+//            return true;
+//        }
         return false;
     }
 }
