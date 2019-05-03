@@ -11,6 +11,8 @@ import java.util.*;
 public class Model {
     private volatile static Model instance;
     private volatile static Datastore datastore;
+    private IdDB idDB = IdDB.getInstance();
+    
     private static int studentIndex = 0;
     private static int gradeIndex = 0;
 
@@ -69,58 +71,78 @@ public class Model {
     }
 
     // **** STUDENTS ****
-    private Map<Integer, Student> students = new HashMap<>();
-
-    public ArrayList<Student> getStudents(){
-        return new ArrayList<>(this.students.values());
-    }
-
-    public void addStudent(Student student){
-        studentIndex++;
-        student.setIndex(studentIndex);
-        students.put(studentIndex, student);
-    }
-
-    public Student getStudent(int id) {
-        return students.getOrDefault(id, null);
-    }
-
-    public boolean deleteStudent(int id) {
-        if(students.remove(id) != null)
-            return true;
-        else
-            return false;
-    }
-
-    // **** GRADES ****
-    public boolean deleteGrade(int idg, int id) {
-        Grade grade = getGrade(id, idg);
-        if (grade != null) {
-            Student student = students.get(id);
-            ArrayList<Grade> grades = student.getGrades();
-            grades.remove(grade);
-            student.setGrades(grades);
-            return true;
-        }
-        return false;
-    }
-
-    public Grade getGrade(int studentId, int gradeId){
-        Student student = students.get(studentId);
-        if (student != null) {
-            ArrayList<Grade> grades = student.getGrades();
-            for (Grade grade: grades)
-                if (grade.getId() == gradeId)
-                    return grade;
+    public Collection<Student> getStudents() {
+        try {
+            Query<Student> query = datastore.createQuery(Student.class);
+            return query.asList();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
 
-    public ArrayList<Grade> getGrades(int id) {
-        Student student = students.get(id);
-        if (student != null) {
-            return student.getGrades();
+    public Student getStudent(int id) {
+        return datastore.find(Student.class, "index", id).get();
+    }
+
+    public Student addStudent(Student object) {
+        object.setIndex(idDB.getNewStudentIndex());
+        datastore.save(object);
+        System.out.println(object);
+        return object;
+    }
+
+    public void updateData(Student student) {
+        Student current = datastore.find(Student.class, "index", student.getIndex()).get();
+        student.setIndex(current.getIndex());
+        student.setId(current.getId());
+        datastore.save(student);
+    }
+
+    public boolean deleteStudent(int id) {
+        Student student = this.getStudent(id);
+        if (student == null) {
+            return false;
+        } else {
+            datastore.delete(datastore.find(Student.class, "index", id));
+            return true;
         }
+
+    }
+
+    public boolean containsData(int id) {
+        return !datastore.find(Student.class, "index", id).asList().isEmpty();
+    }
+
+    // **** GRADES ****
+    public boolean deleteGrade(int idg, int id) {
+//        Grade grade = getGrade(id, idg);
+//        if (grade != null) {
+//            Student student = students.get(id);
+//            ArrayList<Grade> grades = student.getGrades();
+//            grades.remove(grade);
+//            student.setGrades(grades);
+//            return true;
+//        }
+        return false;
+    }
+
+    public Grade getGrade(int studentId, int gradeId){
+//        Student student = students.get(studentId);
+//        if (student != null) {
+//            ArrayList<Grade> grades = student.getGrades();
+//            for (Grade grade: grades)
+//                if (grade.getId() == gradeId)
+//                    return grade;
+//        }
+        return null;
+    }
+
+    public ArrayList<Grade> getGrades(int id) {
+//        Student student = students.get(id);
+//        if (student != null) {
+//            return student.getGrades();
+//        }
         return null;
     }
 

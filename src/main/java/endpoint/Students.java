@@ -6,6 +6,8 @@ import model.Student;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 
 @Path("/students")
 public class Students {
@@ -13,7 +15,7 @@ public class Students {
 
     @GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public ArrayList<Student> getAll() {
+    public Collection<Student> getAll() {
         return model.getStudents();
     }
 
@@ -56,10 +58,10 @@ public class Students {
             student.setName(studentPut.getName());
             modified = true;
         }
-        if (!student.getBirthDate().equals(studentPut.getBirthDate())) {
-            student.setBirthDate(studentPut.getBirthDate());
-            modified = true;
-        }
+//        if (!student.getBirthDate().equals(studentPut.getBirthDate())) {
+//            student.setBirthDate(studentPut.getBirthDate());
+//            modified = true;
+//        }
         if (modified)
             return Response.status(200).entity(student).build();
         else
