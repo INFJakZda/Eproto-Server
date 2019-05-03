@@ -38,7 +38,7 @@ public class Eproto {
             model.addCourse(course2);
 
             // STUDENTS
-            Student student1 = new Student("Ala", "Nowicka");
+            Student student1 = new Student("Ala", "Nowicka", new Date());
 //            Student student2 = new Student("Alaasd", "Kowalska", new Date());
 //            Student student3 = new Student("Alarete", "Monta", new Date());
 
@@ -47,9 +47,9 @@ public class Eproto {
             grade.setId(model.getGradeIndex());
             ArrayList<Grade> gradesS1 = new ArrayList<>();
             gradesS1.add(grade);
-//            student1.setGrades(gradesS1);
+            student1.setGrades(gradesS1);
 
-            model.addStudent(student1);
+//            model.addStudent(student1);
 //            model.addStudent(student2);
 //            model.addStudent(student3);
 
