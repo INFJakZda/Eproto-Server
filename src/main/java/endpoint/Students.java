@@ -5,18 +5,26 @@ import model.Student;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
 @Path("/students")
+@XmlRootElement(name="students")
 public class Students {
     Model model = Model.getInstance();
 
     @GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public Collection<Student> getAll() {
-        return model.getStudents();
+    public Collection<Student> getAll(@QueryParam("name") String name,
+                                      @QueryParam("surname") String surname,
+//                                      @QueryParam("dateFrom") Date dateFrom,
+//                                      @QueryParam("dateTo") Date dateTo,
+                                      @QueryParam("index") Integer index
+
+    ) {
+        return model.getStudents(name);
     }
 
     @POST
@@ -58,12 +66,14 @@ public class Students {
             student.setName(studentPut.getName());
             modified = true;
         }
-//        if (!student.getBirthDate().equals(studentPut.getBirthDate())) {
-//            student.setBirthDate(studentPut.getBirthDate());
-//            modified = true;
-//        }
-        if (modified)
+        if (!student.getBirthDate().equals(studentPut.getBirthDate())) {
+            student.setBirthDate(studentPut.getBirthDate());
+            modified = true;
+        }
+        if (modified) {
+            model.updateStudent(student);
             return Response.status(200).entity(student).build();
+        }
         else
             return Response.status(304).build();
     }

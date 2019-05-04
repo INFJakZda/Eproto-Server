@@ -1,5 +1,6 @@
 package model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import endpoint.Courses;
 import endpoint.Grades;
 import endpoint.Students;
@@ -7,6 +8,7 @@ import org.glassfish.jersey.linking.Binding;
 import org.glassfish.jersey.linking.InjectLink;
 import org.glassfish.jersey.linking.InjectLinks;
 import org.mongodb.morphia.annotations.Embedded;
+import org.mongodb.morphia.annotations.Reference;
 
 import javax.security.auth.Subject;
 import javax.ws.rs.core.Link;
@@ -22,6 +24,7 @@ public class Grade {
     private Integer id;
     private double value;
     private Date date;
+    @Reference
     private Course course;
 
     public Grade(){}
@@ -44,6 +47,8 @@ public class Grade {
     public void setValue(double value) { this.value = value; }
 
     @XmlElement
+    @XmlSchemaType(name="date")
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="CET")
     public Date getDate() { return date; }
     public void setDate(Date date) { this.date = date; }
 

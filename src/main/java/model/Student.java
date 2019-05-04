@@ -66,6 +66,7 @@ public class Student {
     public ArrayList<Grade> getGrades() { return grades; }
     public void setGrades(ArrayList<Grade> grades) { this.grades = grades; }
 
+//    @XmlTransient
     @InjectLinks({
         @InjectLink(
                 rel = "self",

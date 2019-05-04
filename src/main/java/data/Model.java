@@ -71,7 +71,7 @@ public class Model {
     }
 
     // **** STUDENTS ****
-    public Collection<Student> getStudents() {
+    public Collection<Student> getStudents(String nameParam) {
         try {
             Query<Student> query = datastore.createQuery(Student.class);
             return query.asList();
@@ -92,10 +92,10 @@ public class Model {
         return object;
     }
 
-    public void updateData(Student student) {
-        Student current = datastore.find(Student.class, "index", student.getIndex()).get();
-        student.setIndex(current.getIndex());
-        student.setId(current.getId());
+    public void updateStudent(Student student) {
+//        Student current = datastore.find(Student.class, "index", student.getIndex()).get();
+//        student.setIndex(current.getIndex());
+//        student.setId(current.getId());
         datastore.save(student);
     }
 
@@ -116,56 +116,73 @@ public class Model {
 
     // **** GRADES ****
     public boolean deleteGrade(int idg, int id) {
-//        Grade grade = getGrade(id, idg);
-//        if (grade != null) {
-//            Student student = students.get(id);
-//            ArrayList<Grade> grades = student.getGrades();
-//            grades.remove(grade);
-//            student.setGrades(grades);
-//            return true;
-//        }
+        Grade grade = getGrade(id, idg);
+        if (grade != null) {
+            Student student = getStudent(id);
+            student.getGrades().removeIf(grad -> grad.getId() == grade.getId());
+            datastore.save(student);
+            return true;
+        }
         return false;
     }
 
     public Grade getGrade(int studentId, int gradeId){
-//        Student student = students.get(studentId);
-//        if (student != null) {
-//            ArrayList<Grade> grades = student.getGrades();
-//            for (Grade grade: grades)
-//                if (grade.getId() == gradeId)
-//                    return grade;
-//        }
+        Student student = getStudent(studentId);
+        if (student != null) {
+            ArrayList<Grade> grades = student.getGrades();
+            if (grades != null) {
+                for (Grade grade: grades)
+                    if (grade.getId() == gradeId)
+                        return grade;
+            }
+        }
         return null;
     }
 
-    public ArrayList<Grade> getGrades(int id) {
-//        Student student = students.get(id);
-//        if (student != null) {
-//            return student.getGrades();
-//        }
+    public Collection<Grade> getGrades(int id) {
+        Student student = getStudent(id);
+        if (student != null) {
+            Collection<Grade> grades = student.getGrades();
+            return grades;
+        }
         return null;
     }
 
-    public int getGradeIndex() {
-        gradeIndex++;
-        return gradeIndex;
+    public boolean updateGrade(int id, Grade object, Grade old) {
+        Student student = getStudent(id);
+        Course course = getCourse(old.getCourse().getId());
+        if (student != null && course != null) {
+            object.setCourse(course);
+            student.getGrades().removeIf(grade -> grade.getId() == object.getId());
+            student.getGrades().add(object);
+            datastore.save(student);
+            return true;
+        }
+        return false;
     }
 
     public boolean addGrade(Grade grade, int id){
-//        Student student = students.get(id);
-//        if(student != null) {
-//            grade.setId(getGradeIndex());
-//            int courseId = grade.getCourse().getId();
-//            Course course = courses.get(courseId);
-//            if (course == null) {
-//                return false;
-//            }
-//            grade.setCourse(course);
-//            ArrayList<Grade> grades = student.getGrades();
-//            grades.add(grade);
-//            student.setGrades(grades);
-//            return true;
-//        }
+        Student student = getStudent(id);
+        if(student != null) {
+            grade.setId(idDB.getNewGradeId());
+            ObjectId courseId = grade.getCourse().getId();
+            Course course = getCourse(courseId);
+            if (course == null) {
+                return false;
+            }
+            grade.setCourse(course);
+            ArrayList<Grade> grades = student.getGrades();
+            if (grades == null) {
+                grades = new ArrayList<>();
+            }
+            grades.add(grade);
+            student.setGrades(grades);
+            updateStudent(student);
+            return true;
+        }
         return false;
+    }
+    public void addGradeId(Grade grade){
+        grade.setId(idDB.getNewGradeId());
     }
 }

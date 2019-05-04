@@ -6,21 +6,16 @@ import model.Grade;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.ArrayList;
+import java.util.Collection;
 
 @Path("/students/{id}/grades")
 public class Grades {
     Model model = Model.getInstance();
 
-//    @GET
-//    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-//    public ArrayList<Grade> getAll(@PathParam("id") int id) {
-//        return model.getGrades(id);
-//    }
-
     @GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public ArrayList<Grade> getAll(@PathParam("id") int id) {
-        ArrayList<Grade> grades = model.getGrades(id);
+    public Collection<Grade> getAll(@PathParam("id") int id) {
+        Collection<Grade> grades = model.getGrades(id);
         if(grades != null) {
             return grades;
         }
@@ -44,21 +39,24 @@ public class Grades {
     @Path("{idG}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response get(@PathParam("idG") int idG, @PathParam("id") int id) {
-        ArrayList<Grade> gradeList = model.getGrades(id);
-        for (Grade grade : gradeList) {
-            if (grade.getId() == idG) {
-                return Response.status(200).entity(grade).build();
+        Collection<Grade> gradeList = model.getGrades(id);
+        if (gradeList != null){
+            for (Grade grade : gradeList) {
+                if (grade.getId() == idG) {
+                    return Response.status(200).entity(grade).build();
+                }
             }
         }
         return Response.status(404).build();
     }
-//
+
     @PUT
     @Path("{idG}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response put(Grade gradePut, @PathParam("id") int id, @PathParam("idG") int idG) {
         Grade grade = model.getGrade(id, idG);
+        Grade oldGrade = model.getGrade(id, idG);
         boolean modified = false;
         if (grade == null){
             return Response.status(404).build();
@@ -75,8 +73,14 @@ public class Grades {
             grade.setCourse(gradePut.getCourse());
             modified = true;
         }
-        if (modified)
-            return Response.status(200).entity(grade).build();
+        if (modified) {
+            if (model.updateGrade(id, grade, gradePut)) {
+                return Response.status(200).entity(grade).build();
+            }
+            else {
+                return Response.status(404).build();
+            }
+        }
         else
             return Response.status(304).build();
     }
