@@ -65,6 +65,21 @@ public class Model {
         if (course == null) {
             return false;
         } else {
+
+            Collection<Student> students = getStudents(null);
+            for (Student student : students) {
+
+                ArrayList<Grade> grades = student.getGrades();
+                if (grades != null) {
+//                    grades.removeIf(grad -> grad.getCourse().getId() == id);
+                    for(Grade grade : grades) {
+                        if (grade.getCourse().getId().equals(id)) {
+                            deleteGrade(grade.getId(), student.getIndex());
+                        }
+                    }
+                }
+//                datastore.save(student);
+            }
             datastore.delete(datastore.find(Course.class, "id", id));
             return true;
         }
