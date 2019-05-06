@@ -186,12 +186,14 @@ public class Model {
             Collection<Grade> grades = student.getGrades();
 
             courseId.ifPresent(id -> grades.removeIf(grade -> !grade.getCourse().getId().equals(id)));
-            if (orderParam < 0)
-                value.ifPresent(f -> grades.removeIf(grade -> grade.getValue() > f));
-            else if (orderParam == 0)
-                value.ifPresent(f -> grades.removeIf(grade -> grade.getValue() != f));
-            else
-                value.ifPresent(f -> grades.removeIf(grade -> grade.getValue() < f));
+            if (valueParam != 0) {
+                if (orderParam < 0)
+                    value.ifPresent(f -> grades.removeIf(grade -> grade.getValue() > f));
+                else if (orderParam == 0)
+                    value.ifPresent(f -> grades.removeIf(grade -> grade.getValue() != f));
+                else
+                    value.ifPresent(f -> grades.removeIf(grade -> grade.getValue() < f));
+            }
             return grades;
         }
         return null;
