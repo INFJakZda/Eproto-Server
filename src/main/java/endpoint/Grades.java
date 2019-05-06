@@ -2,6 +2,7 @@ package endpoint;
 
 import data.Model;
 import model.Grade;
+import org.bson.types.ObjectId;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -21,6 +22,21 @@ public class Grades {
         }
         return null;
     }
+//    @GET
+//    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+//    public Collection<Grade> getAll(@Context UriInfo info,
+//                                    @PathParam("id") int id) {
+////        String subjectIdString = info.getQueryParameters().getFirst("courseId");
+////        String value = info.getQueryParameters().getFirst("value");
+////        String order = info.getQueryParameters().getFirst("order");
+////        ObjectId subjectId = (subjectIdString != null) ? new ObjectId(subjectIdString) : null;
+////        Collection<Grade> grades = model.getGrades(id, subjectId, Float.valueOf(value), Integer.parseInt(order));
+//        Collection<Grade> grades = model.getGrades(id, null, 0, 0);
+//        if(grades != null) {
+//            return grades;
+//        }
+//        return null;
+//    }
 
     @POST
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -39,6 +55,7 @@ public class Grades {
     @Path("{idG}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response get(@PathParam("idG") int idG, @PathParam("id") int id) {
+//        Collection<Grade> gradeList = model.getGrades(id, null, 0, 0);
         Collection<Grade> gradeList = model.getGrades(id);
         if (gradeList != null){
             for (Grade grade : gradeList) {

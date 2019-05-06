@@ -25,6 +25,7 @@ public class Student {
     private String name;
     private String surname;
     private Date birthDate;
+    private int order;
     @Embedded
     @XmlTransient
     private ArrayList<Grade> grades;
@@ -35,6 +36,7 @@ public class Student {
         this.surname = surname;
         this.birthDate = birthDate;
         this.grades = new ArrayList<>();
+        this.order = 0;
     }
 
     @Id
@@ -87,4 +89,12 @@ public class Student {
     @XmlElementWrapper(name = "links")
     @XmlJavaTypeAdapter(Link.JaxbAdapter.class)
     List<Link> links;
+
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
 }
