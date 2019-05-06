@@ -27,11 +27,13 @@ public class Grades {
     public Collection<Grade> getAll(@Context UriInfo info,
                                     @PathParam("id") int id) {
         String subjectIdString = info.getQueryParameters().getFirst("courseId");
-//        String value = info.getQueryParameters().getFirst("value");
-//        String order = info.getQueryParameters().getFirst("order");
+        String value = info.getQueryParameters().getFirst("value");
+        String order = info.getQueryParameters().getFirst("order");
         ObjectId subjectId = (subjectIdString != null) ? new ObjectId(subjectIdString) : null;
+        Double val = value == null ? 0 : Double.valueOf(value);
+        int ord = order == null ? 0 : Integer.parseInt(order);
 //        Collection<Grade> grades = model.getGrades(id, subjectId, Float.valueOf(value), Integer.parseInt(order));
-        Collection<Grade> grades = model.getGrades(id, subjectId, 0, 0);
+        Collection<Grade> grades = model.getGrades(id, subjectId, val, ord);
         if(grades != null) {
             return grades;
         }

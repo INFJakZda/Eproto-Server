@@ -176,14 +176,22 @@ public class Model {
         return null;
     }
 
-    public Collection<Grade> getGrades(int idS, ObjectId courseIdParam, float value, int order) {
+    public Collection<Grade> getGrades(int idS, ObjectId courseIdParam, double valueParam, int orderParam) {
         Student student = getStudent(idS);
         if (student != null) {
             Optional<ObjectId> courseId = Optional.ofNullable(courseIdParam);
+            Optional<Double> value = Optional.ofNullable(valueParam);
+            System.out.println(valueParam);
 
             Collection<Grade> grades = student.getGrades();
 
             courseId.ifPresent(id -> grades.removeIf(grade -> !grade.getCourse().getId().equals(id)));
+            if (orderParam < 0)
+                value.ifPresent(f -> grades.removeIf(grade -> grade.getValue() > f));
+            else if (orderParam == 0)
+                value.ifPresent(f -> grades.removeIf(grade -> grade.getValue() != f));
+            else
+                value.ifPresent(f -> grades.removeIf(grade -> grade.getValue() < f));
             return grades;
         }
         return null;
