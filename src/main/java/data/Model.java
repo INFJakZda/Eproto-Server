@@ -176,10 +176,14 @@ public class Model {
         return null;
     }
 
-    public Collection<Grade> getGrades(int id) {
-        Student student = getStudent(id);
+    public Collection<Grade> getGrades(int idS, ObjectId courseIdParam, float value, int order) {
+        Student student = getStudent(idS);
         if (student != null) {
+            Optional<ObjectId> courseId = Optional.ofNullable(courseIdParam);
+
             Collection<Grade> grades = student.getGrades();
+
+            courseId.ifPresent(id -> grades.removeIf(grade -> !grade.getCourse().getId().equals(id)));
             return grades;
         }
         return null;
