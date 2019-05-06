@@ -188,11 +188,11 @@ public class Model {
             courseId.ifPresent(id -> grades.removeIf(grade -> !grade.getCourse().getId().equals(id)));
             if (valueParam != 0) {
                 if (orderParam < 0)
-                    value.ifPresent(f -> grades.removeIf(grade -> grade.getValue() > f));
+                    value.ifPresent(f -> grades.removeIf(grade -> grade.getValue() >= f));
                 else if (orderParam == 0)
                     value.ifPresent(f -> grades.removeIf(grade -> grade.getValue() != f));
                 else
-                    value.ifPresent(f -> grades.removeIf(grade -> grade.getValue() < f));
+                    value.ifPresent(f -> grades.removeIf(grade -> grade.getValue() <= f));
             }
             return grades;
         }
