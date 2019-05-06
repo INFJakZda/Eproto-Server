@@ -20,12 +20,13 @@ public class Students {
     public Collection<Student> getAll(@Context UriInfo info,
                                       @QueryParam("name") String name,
                                       @QueryParam("surname") String surname,
-                                      @QueryParam("birthDate") Date date,
-                                      @QueryParam("order") int order
+                                      @QueryParam("birthDate") Date date
+//                                      @QueryParam("order") int order
 //                                      @QueryParam("index") Integer index
 
     ) {
-//        String order = info.getQueryParameters().getFirst("order");
+        String orders = info.getQueryParameters().getFirst("order");
+        int order = orders == null ? 0 : Integer.parseInt(orders);
 //        if (date == null) {
 //            date = new Date();
 //        }

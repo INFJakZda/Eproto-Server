@@ -96,7 +96,7 @@ public class Model {
 
             name.ifPresent(s -> query.and(query.criteria("name").containsIgnoreCase(s)));
             surname.ifPresent(s -> query.and(query.criteria("surname").containsIgnoreCase(s)));
-            System.out.println(dateParam);
+//            System.out.println(dateParam);
 //            if (dateParam != null) {
             if (order < 0)
                 dateQuery.ifPresent(date -> query.and(query.criteria("birthDate").lessThan(date)));
