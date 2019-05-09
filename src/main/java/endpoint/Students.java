@@ -17,14 +17,21 @@ public class Students {
 
     @GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public Collection<Student> getAll(@QueryParam("name") String name,
+    public Collection<Student> getAll(@Context UriInfo info,
+                                      @QueryParam("name") String name,
                                       @QueryParam("surname") String surname,
-//                                      @QueryParam("dateFrom") Date dateFrom,
-//                                      @QueryParam("dateTo") Date dateTo,
-                                      @QueryParam("index") Integer index
+                                      @QueryParam("birthDate") Date date
+//                                      @QueryParam("order") int order
+//                                      @QueryParam("index") Integer index
 
     ) {
-        return model.getStudents(name);
+        String orders = info.getQueryParameters().getFirst("order");
+        int order = orders == null ? 0 : Integer.parseInt(orders);
+//        if (date == null) {
+//            date = new Date();
+//        }
+//        return model.getStudents(name, surname, date, Integer.parseInt(order));
+        return model.getStudents(name, surname, date, order);
     }
 
     @POST

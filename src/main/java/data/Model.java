@@ -66,7 +66,7 @@ public class Model {
             return false;
         } else {
 
-            Collection<Student> students = getStudents(null);
+            Collection<Student> students = getStudents(null, null, null, 0);
             for (Student student : students) {
 
                 ArrayList<Grade> grades = student.getGrades();
@@ -86,10 +86,32 @@ public class Model {
     }
 
     // **** STUDENTS ****
-    public Collection<Student> getStudents(String nameParam) {
+    public Collection<Student> getStudents(String nameParam, String surnameParam, Date dateParam, int order) {
         try {
             Query<Student> query = datastore.createQuery(Student.class);
-            return query.asList();
+
+            Optional<String> name = Optional.ofNullable(nameParam);
+            Optional<String> surname = Optional.ofNullable(surnameParam);
+            Optional<Date> dateQuery = Optional.ofNullable(dateParam);
+
+            name.ifPresent(s -> query.and(query.criteria("name").containsIgnoreCase(s)));
+            surname.ifPresent(s -> query.and(query.criteria("surname").containsIgnoreCase(s)));
+//            System.out.println(dateParam);
+//            if (dateParam != null) {
+            if (order < 0)
+                dateQuery.ifPresent(date -> query.and(query.criteria("birthDate").lessThan(date)));
+            else if (order == 0)
+                dateQuery.ifPresent(date -> query.and(query.criteria("birthDate").equal(date)));
+            else
+                dateQuery.ifPresent(date -> query.and(query.criteria("birthDate").greaterThan(date)));
+
+//            }
+
+            List<Student> list = query.asList();
+
+//            index.ifPresent(i -> list.removeIf(item -> !String.valueOf(item.getIndex()).contains(i.toString())));
+
+            return list;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -154,14 +176,48 @@ public class Model {
         return null;
     }
 
-    public Collection<Grade> getGrades(int id) {
-        Student student = getStudent(id);
+    public Collection<Grade> getGrades(int idS, ObjectId courseIdParam, double valueParam, int orderParam) {
+        Student student = getStudent(idS);
         if (student != null) {
+            Optional<ObjectId> courseId = Optional.ofNullable(courseIdParam);
+            Optional<Double> value = Optional.ofNullable(valueParam);
+            System.out.println(valueParam);
+
             Collection<Grade> grades = student.getGrades();
+
+            courseId.ifPresent(id -> grades.removeIf(grade -> !grade.getCourse().getId().equals(id)));
+            if (valueParam != 0) {
+                if (orderParam < 0)
+                    value.ifPresent(f -> grades.removeIf(grade -> grade.getValue() >= f));
+                else if (orderParam == 0)
+                    value.ifPresent(f -> grades.removeIf(grade -> grade.getValue() != f));
+                else
+                    value.ifPresent(f -> grades.removeIf(grade -> grade.getValue() <= f));
+            }
             return grades;
         }
         return null;
     }
+
+//    public Collection<Grade> getGrades(int idS, ObjectId courseIdParam, float valueParam, int orderParam) {
+//        Student student = getStudent(idS);
+//        if (student != null) {
+//            Optional<ObjectId> courseId = Optional.ofNullable(courseIdParam);
+//            Optional<Float> value = Optional.ofNullable(valueParam);
+//
+//            Collection<Grade> grades = student.getGrades();
+//
+//            courseId.ifPresent(id -> grades.removeIf(grade -> !grade.getCourse().getId().equals(id)));
+//            if (orderParam < 0)
+//                value.ifPresent(f -> grades.removeIf(grade -> grade.getValue() < f));
+//            if (orderParam == 0)
+//                value.ifPresent(f -> grades.removeIf(grade -> grade.getValue() == f));
+//            else
+//                value.ifPresent(f -> grades.removeIf(grade -> grade.getValue() > f));
+//            return grades;
+//        }
+//        return null;
+//    }
 
     public boolean updateGrade(int id, Grade object, Grade old) {
         Student student = getStudent(id);

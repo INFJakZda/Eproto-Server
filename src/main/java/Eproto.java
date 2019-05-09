@@ -32,27 +32,26 @@ public class Eproto {
     public static void createData(Model model) {
         try {
             // COURSES
-            Course course1 = new Course("SINT", "Pawlak");
-            Course course2 = new Course("PIRO", "Kowalski");
-            model.addCourse(course1);
-            model.addCourse(course2);
-
-            // STUDENTS
-            Student student1 = new Student("Ala", "Nowicka", new Date());
-            Student student2 = new Student("Alaasd", "Kowalska", new Date());
-            Student student3 = new Student("Alarete", "Monta", new Date());
-
-            // GRADES
-            Grade grade = new Grade(3.5, new Date(), course1);
-            model.addGradeId(grade);
-            ArrayList<Grade> gradesS1 = new ArrayList<>();
-            gradesS1.add(grade);
-            student1.setGrades(gradesS1);
-
-            model.addStudent(student1);
-            model.addStudent(student2);
-            model.addStudent(student3);
-
+//            Course course1 = new Course("SINT", "Pawlak");
+//            Course course2 = new Course("PIRO", "Kowalski");
+//            model.addCourse(course1);
+//            model.addCourse(course2);
+//
+//            // STUDENTS
+//            Student student1 = new Student("Ala", "Nowicka", new Date());
+//            Student student2 = new Student("Alaasd", "Kowalska", new Date());
+//            Student student3 = new Student("Alarete", "Monta", new Date());
+//
+//            // GRADES
+//            Grade grade = new Grade(3.5, new Date(), course1);
+//            model.addGradeId(grade);
+//            ArrayList<Grade> gradesS1 = new ArrayList<>();
+//            gradesS1.add(grade);
+//            student1.setGrades(gradesS1);
+//
+//            model.addStudent(student1);
+//            model.addStudent(student2);
+//            model.addStudent(student3);
 
         } catch (Exception e) {
             System.out.println("BŁĄÐ - createData");

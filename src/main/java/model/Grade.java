@@ -26,6 +26,7 @@ public class Grade {
     private Date date;
     @Reference
     private Course course;
+//    private int order;
 
     public Grade(){}
     public Grade(double value, Date date, Course course){
@@ -33,6 +34,7 @@ public class Grade {
         this.value = value;
         this.date = date;
         this.course = course;
+//        this.order = 0;
     }
 
 //    private static int lastId = 0;
@@ -80,4 +82,12 @@ public class Grade {
     @XmlElementWrapper(name = "links")
     @XmlJavaTypeAdapter(Link.JaxbAdapter.class)
     List<Link> links;
+
+//    public int getOrder() {
+//        return order;
+//    }
+//
+//    public void setOrder(int order) {
+//        this.order = order;
+//    }
 }

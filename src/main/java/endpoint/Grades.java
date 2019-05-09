@@ -2,6 +2,7 @@ package endpoint;
 
 import data.Model;
 import model.Grade;
+import org.bson.types.ObjectId;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -12,10 +13,27 @@ import java.util.Collection;
 public class Grades {
     Model model = Model.getInstance();
 
+//    @GET
+//    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+//    public Collection<Grade> getAll(@PathParam("id") int id) {
+//        Collection<Grade> grades = model.getGrades(id);
+//        if(grades != null) {
+//            return grades;
+//        }
+//        return null;
+//    }
     @GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public Collection<Grade> getAll(@PathParam("id") int id) {
-        Collection<Grade> grades = model.getGrades(id);
+    public Collection<Grade> getAll(@Context UriInfo info,
+                                    @PathParam("id") int id) {
+        String subjectIdString = info.getQueryParameters().getFirst("courseId");
+        String value = info.getQueryParameters().getFirst("value");
+        String order = info.getQueryParameters().getFirst("order");
+        ObjectId subjectId = (subjectIdString != null) ? new ObjectId(subjectIdString) : null;
+        Double val = value == null ? 0 : Double.valueOf(value);
+        int ord = order == null ? 0 : Integer.parseInt(order);
+//        Collection<Grade> grades = model.getGrades(id, subjectId, Float.valueOf(value), Integer.parseInt(order));
+        Collection<Grade> grades = model.getGrades(id, subjectId, val, ord);
         if(grades != null) {
             return grades;
         }
@@ -39,7 +57,8 @@ public class Grades {
     @Path("{idG}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response get(@PathParam("idG") int idG, @PathParam("id") int id) {
-        Collection<Grade> gradeList = model.getGrades(id);
+//        Collection<Grade> gradeList = model.getGrades(id, null, 0, 0);
+        Collection<Grade> gradeList = model.getGrades(id, null, 0, 0);
         if (gradeList != null){
             for (Grade grade : gradeList) {
                 if (grade.getId() == idG) {
